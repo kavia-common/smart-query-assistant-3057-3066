@@ -27,21 +27,39 @@ Launches the test runner in interactive watch mode.
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
+## API Configuration
+
+The chat UI calls a backend endpoint at `/api/chat`. If your backend runs on a different origin or port, configure the base URL via environment variable:
+
+1. Copy `.env.example` to `.env`
+2. Set `REACT_APP_API_BASE_URL` to your backend’s base URL (no trailing slash), e.g.:
+   - `REACT_APP_API_BASE_URL=http://localhost:8000`
+   - `REACT_APP_API_BASE_URL=https://api.example.com`
+3. Restart the dev server after changing `.env`.
+
+If `REACT_APP_API_BASE_URL` is not set, the app will use same-origin requests.
+
+The frontend expects the backend to respond with JSON of shape:
+```json
+{ "reply": "string response from assistant" }
+```
+
+## Troubleshooting "failed to fetch response"
+
+If the UI shows “failed to fetch response”:
+
+- Ensure the backend is running and reachable at `${REACT_APP_API_BASE_URL || same-origin}/api/chat`
+- If using a different host/port:
+  - Set `REACT_APP_API_BASE_URL` in `.env`
+  - Ensure CORS is enabled on the backend to allow the frontend origin
+- Check that the backend returns valid JSON `{ "reply": "..." }` with a 2xx status
+- Network timeouts and connection failures will surface with detailed hints in the UI error banner
+
 ## Customization
 
 ### Colors
 
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
-```
+The main brand colors are defined as CSS variables in `src/App.css`.
 
 ### Components
 
@@ -58,25 +76,19 @@ Common components include:
 To learn React, check out the [React documentation](https://reactjs.org/).
 
 ### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
 ### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
 ### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
 ### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
 ### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
 ### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

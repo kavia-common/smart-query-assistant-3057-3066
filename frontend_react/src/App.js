@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
+import { sendChatRequest, getApiBaseUrl } from './api';
 
 /**
  * Ocean Professional themed Chat UI
@@ -64,32 +65,6 @@ export default function App() {
     inputRef.current?.focus();
   }, []);
 
-  /** Placeholder API call - adjust endpoint when backend is ready */
-  async function sendToBackend(history, userText) {
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: history.map((m) => ({ role: m.role, content: m.content })),
-          prompt: userText,
-        }),
-      });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`Server responded ${res.status}: ${txt}`);
-      }
-      const data = await res.json();
-      // Expecting { reply: string }
-      return data?.reply ?? 'Sorry, I could not generate a response.';
-    } catch (err) {
-      throw err;
-    }
-  }
-
   /** Handle submit */
   async function handleSend(e) {
     e?.preventDefault?.();
@@ -116,7 +91,8 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const reply = await sendToBackend([...messages, userMsg], trimmed);
+      const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
+      const reply = await sendChatRequest({ messages: history, prompt: trimmed });
       setMessages((prev) =>
         prev.map((m) =>
           m.id === pendingAssistant.id
@@ -126,13 +102,15 @@ export default function App() {
       );
     } catch (err) {
       console.error(err);
+      const base = getApiBaseUrl() || '(same-origin)';
+      const detail = err?.message || 'Unknown error';
       setErrorMsg(
-        'There was a problem contacting the assistant. Please try again.'
+        `There was a problem contacting the assistant. ${detail} If your backend runs on another origin, set REACT_APP_API_BASE_URL (current: ${base}).`
       );
       setMessages((prev) =>
         prev.map((m) =>
           m.id === pendingAssistant.id
-            ? { ...m, content: 'Error: failed to fetch response.', status: 'error' }
+            ? { ...m, content: 'Error: failed to fetch response. Please check API configuration and try again.', status: 'error' }
             : m
         )
       );
@@ -234,7 +212,7 @@ export default function App() {
           </div>
         </form>
         <p className="helper">
-          Press Enter to send • Shift+Enter for a new line
+          Press Enter to send • Shift+Enter for a new line • API: {getApiBaseUrl() || '(same-origin)'}
         </p>
       </footer>
     </div>
