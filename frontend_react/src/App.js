@@ -23,7 +23,10 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 export default function App() {
   /** Theme handling with system preference default */
   const prefersDark = useMemo(
-    () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches,
     []
   );
   const [theme, setTheme] = useState(prefersDark ? 'dark' : 'light');
@@ -37,7 +40,7 @@ export default function App() {
 
   /** Chat state */
   const [messages, setMessages] = useState(
-    /** @type {Message[]} */ ([
+    /** @type {Message[]} */ [
       {
         id: uid(),
         role: 'assistant',
@@ -45,7 +48,7 @@ export default function App() {
           "Hello! I'm your AI assistant. Ask me anything and I'll do my best to help.",
         status: 'done',
       },
-    ])
+    ]
   );
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -72,35 +75,39 @@ export default function App() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
-    const userMsg = /** @type {Message} */ ({
-      id: uid(),
-      role: 'user',
-      content: trimmed,
-      status: 'done',
-    });
+    const userMsg =
+      /** @type {Message} */ {
+        id: uid(),
+        role: 'user',
+        content: trimmed,
+        status: 'done',
+      };
 
-    const pendingAssistant = /** @type {Message} */ ({
-      id: uid(),
-      role: 'assistant',
-      content: 'Thinking…',
-      status: 'pending',
-    });
+    const pendingAssistant =
+      /** @type {Message} */ {
+        id: uid(),
+        role: 'assistant',
+        content: 'Thinking…',
+        status: 'pending',
+      };
 
     setMessages((prev) => [...prev, userMsg, pendingAssistant]);
     setInput('');
     setIsLoading(true);
 
     try {
-      const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
+      const history = [...messages, userMsg].map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
       const reply = await sendChatRequest({ messages: history, prompt: trimmed });
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === pendingAssistant.id
-            ? { ...m, content: reply, status: 'done' }
-            : m
+          m.id === pendingAssistant.id ? { ...m, content: reply, status: 'done' } : m
         )
       );
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
       const base = getApiBaseUrl() || '(same-origin)';
       const detail = err?.message || 'Unknown error';
@@ -110,7 +117,12 @@ export default function App() {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === pendingAssistant.id
-            ? { ...m, content: 'Error: failed to fetch response. Please check API configuration and try again.', status: 'error' }
+            ? {
+                ...m,
+                content:
+                  'Error: failed to fetch response. Please check API configuration and try again.',
+                status: 'error',
+              }
             : m
         )
       );
@@ -133,7 +145,9 @@ export default function App() {
       <header className="header" aria-label="Application Header">
         <div className="header-inner">
           <div className="brand">
-            <div className="logo" aria-hidden="true">💬</div>
+            <div className="logo" aria-hidden="true">
+              💬
+            </div>
             <div className="titles">
               <h1 className="title">Smart Query Assistant</h1>
               <p className="subtitle">Ocean Professional</p>
@@ -154,8 +168,7 @@ export default function App() {
                   {
                     id: uid(),
                     role: 'assistant',
-                    content:
-                      "New chat started. How can I assist you today?",
+                    content: 'New chat started. How can I assist you today?',
                     status: 'done',
                   },
                 ])
@@ -212,7 +225,8 @@ export default function App() {
           </div>
         </form>
         <p className="helper">
-          Press Enter to send • Shift+Enter for a new line • API: {getApiBaseUrl() || '(same-origin)'}
+          Press Enter to send • Shift+Enter for a new line • API:{' '}
+          {getApiBaseUrl() || '(same-origin)'}
         </p>
       </footer>
     </div>
@@ -223,7 +237,9 @@ export default function App() {
 // PUBLIC_INTERFACE
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
-  const classes = `bubble ${isUser ? 'user' : 'assistant'} ${message.status === 'error' ? 'error-bubble' : ''}`;
+  const classes = `bubble ${isUser ? 'user' : 'assistant'} ${
+    message.status === 'error' ? 'error-bubble' : ''
+  }`;
   return (
     <div className={classes} role="group" aria-roledescription="message">
       <div className="avatar" aria-hidden="true">

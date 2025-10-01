@@ -1,6 +1,7 @@
-//
-// Centralized API client for Chat endpoint with environment-based configuration.
-//
+/**
+ * Centralized API client for Chat endpoint with environment-based configuration.
+ */
+
 // PUBLIC_INTERFACE
 export function getApiBaseUrl() {
   /**
@@ -79,14 +80,16 @@ export async function sendChatRequest({ messages, prompt }) {
       bodyText = '';
     }
     const snippet = bodyText ? ` Response body: ${bodyText.slice(0, 200)}` : '';
-    throw new Error(`Assistant API error ${response.status}. Check backend logs or configuration.${snippet}`);
+    throw new Error(
+      `Assistant API error ${response.status}. Check backend logs or configuration.${snippet}`
+    );
   }
 
   // Parse JSON
   let json;
   try {
     json = await response.json();
-  } catch (err) {
+  } catch {
     throw new Error('Assistant API returned invalid JSON.');
   }
 

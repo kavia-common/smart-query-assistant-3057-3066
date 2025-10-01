@@ -1,94 +1,64 @@
-# Lightweight React Template for KAVIA
+# Smart Query Assistant Frontend (React)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A modern, minimalist chat UI for interacting with the Smart Query Assistant backend (FastAPI). Styled with the Ocean Professional theme (blue & amber accents, subtle shadows, rounded corners, smooth transitions).
 
 ## Features
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+- Ocean Professional theme with light/dark toggle
+- Header with branding and "New Chat" control
+- Main chat area with user and assistant bubbles
+- Bottom composer with Enter to send / Shift+Enter for newline
+- REST integration with FastAPI backend `/api/chat`
+- Clear error handling with helpful hints
+- Accessible and responsive
 
 ## Getting Started
 
-In the project directory, you can run:
+Install dependencies and start the dev server:
 
-### `npm start`
+- npm install
+- npm start
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-### `npm test`
-
-Launches the test runner in interactive watch mode.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Open http://localhost:3000 to view it.
 
 ## API Configuration
 
-The chat UI calls a backend endpoint at `/api/chat`. If your backend runs on a different origin or port, configure the base URL via environment variable:
+The UI calls a backend endpoint at `/api/chat`. If your backend runs on a different origin/port, configure:
 
 1. Copy `.env.example` to `.env`
-2. Set `REACT_APP_API_BASE_URL` to your backend’s base URL (no trailing slash), e.g.:
-   - `REACT_APP_API_BASE_URL=http://localhost:8000`
-   - `REACT_APP_API_BASE_URL=https://api.example.com`
-3. Restart the dev server after changing `.env`.
+2. Set `REACT_APP_API_BASE_URL` (no trailing slash), e.g.:
+   - REACT_APP_API_BASE_URL=http://localhost:8000
+   - REACT_APP_API_BASE_URL=https://api.example.com
+3. Restart `npm start` after editing `.env`
 
-If `REACT_APP_API_BASE_URL` is not set, the app will use same-origin requests.
+If `REACT_APP_API_BASE_URL` is not set, the app uses same-origin requests.
 
-The frontend expects the backend to respond with JSON of shape:
-```json
-{ "reply": "string response from assistant" }
-```
+Expected backend response:
+{
+  "reply": "string response from assistant"
+}
 
-## Troubleshooting "failed to fetch response"
+## Troubleshooting
 
-If the UI shows “failed to fetch response”:
+If you see “failed to fetch response”:
+- Ensure backend is running and reachable at `${REACT_APP_API_BASE_URL || same-origin}/api/chat`
+- Set REACT_APP_API_BASE_URL in `.env` if using a different host/port
+- Ensure backend CORS allows the frontend origin
+- Check backend responds with valid JSON `{ "reply": "..." }` and a 2xx status
 
-- Ensure the backend is running and reachable at `${REACT_APP_API_BASE_URL || same-origin}/api/chat`
-- If using a different host/port:
-  - Set `REACT_APP_API_BASE_URL` in `.env`
-  - Ensure CORS is enabled on the backend to allow the frontend origin
-- Check that the backend returns valid JSON `{ "reply": "..." }` with a 2xx status
-- Network timeouts and connection failures will surface with detailed hints in the UI error banner
+## Theming and Customization
 
-## Customization
+- Theme variables in `src/App.css`
+- Lightweight, framework-free CSS
+- Components are plain React function components for easy extension
 
-### Colors
+## Scripts
 
-The main brand colors are defined as CSS variables in `src/App.css`.
+- npm start
+- npm test
+- npm run build
+- npm run eject
 
-### Components
+## License
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
-
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
-
-## Learn More
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-Moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-Moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-Moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-Moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-Moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-Moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT
