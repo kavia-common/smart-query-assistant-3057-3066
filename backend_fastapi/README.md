@@ -12,6 +12,9 @@ FastAPI backend service that exposes POST /api/chat. It accepts chat messages an
 
 Open http://localhost:8000/docs to view API docs.
 
+Frontend note: point your React app to this backend by setting in frontend `.env`:
+REACT_APP_API_BASE_URL=http://localhost:8000
+
 ## Environment variables
 
 Create a .env file (do not commit) and set:

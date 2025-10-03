@@ -1,4 +1,5 @@
 //
+//
 // Centralized API client for Chat endpoint with environment-based configuration.
 //
 // PUBLIC_INTERFACE
@@ -10,9 +11,18 @@ export function getApiBaseUrl() {
    *
    * Note: For CRA, env vars must be prefixed with REACT_APP_ and injected at build time.
    */
-  const envBase = process.env.REACT_APP_API_BASE_URL;
+  let envBase = process.env.REACT_APP_API_BASE_URL;
+
   if (envBase && typeof envBase === 'string') {
-    return envBase.replace(/\/+$/, ''); // trim trailing slash
+    envBase = envBase.trim();
+
+    // If base looks like "localhost:8000" without protocol, prepend http:// for dev ergonomics
+    if (/^[\w.-]+:\d{2,5}$/.test(envBase)) {
+      envBase = `http://${envBase}`;
+    }
+
+    // Trim trailing slash
+    return envBase.replace(/\/+$/, '');
   }
   return '';
 }
@@ -67,7 +77,10 @@ export async function sendChatRequest({ messages, prompt }) {
     // Network/connection-level errors
     const hint = buildConnectionHint();
     const detail = err?.message || 'Unknown network error';
-    throw new Error(`Failed to reach assistant API. ${hint} (detail: ${detail})`);
+    const baseShown = base || '(same-origin)';
+    throw new Error(
+      `Failed to reach assistant API at ${baseShown}/api/chat. ${hint} (detail: ${detail})`
+    );
   }
 
   if (!response.ok) {
@@ -79,7 +92,10 @@ export async function sendChatRequest({ messages, prompt }) {
       bodyText = '';
     }
     const snippet = bodyText ? ` Response body: ${bodyText.slice(0, 200)}` : '';
-    throw new Error(`Assistant API error ${response.status}. Check backend logs or configuration.${snippet}`);
+    const baseShown = base || '(same-origin)';
+    throw new Error(
+      `Assistant API error ${response.status} at ${baseShown}/api/chat. Check backend logs or configuration.${snippet}`
+    );
   }
 
   // Parse JSON
@@ -100,5 +116,11 @@ export async function sendChatRequest({ messages, prompt }) {
 
 function buildConnectionHint() {
   const base = getApiBaseUrl() || '(same-origin)';
-  return `Verify backend is running and reachable at ${base}/api/chat. If using a different host/port, set REACT_APP_API_BASE_URL in the environment (e.g., "REACT_APP_API_BASE_URL=https://api.example.com"). Also ensure CORS/proxy are configured.`;
+  return [
+    `Verify backend is running and reachable at ${base}/api/chat.`,
+    'If the backend runs on another origin/port, set REACT_APP_API_BASE_URL in .env (no trailing slash), e.g.:',
+    '  REACT_APP_API_BASE_URL=http://localhost:8000',
+    'Restart the React dev server after changing .env (CTRL+C then npm start).',
+    'Ensure FastAPI CORS allows your frontend origin (CORS_ALLOW_ORIGINS in backend .env).',
+  ].join(' ');
 }

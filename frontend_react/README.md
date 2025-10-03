@@ -29,15 +29,16 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 ## API Configuration
 
-The chat UI calls a backend endpoint at `/api/chat`. If your backend runs on a different origin or port, configure the base URL via environment variable:
+The chat UI calls a backend endpoint at `/api/chat`.
+By default, the app uses same-origin requests. If your backend runs on a different origin/port (e.g., FastAPI on http://localhost:8000), configure the base URL via environment variable:
 
 1. Copy `.env.example` to `.env`
 2. Set `REACT_APP_API_BASE_URL` to your backend’s base URL (no trailing slash), e.g.:
    - `REACT_APP_API_BASE_URL=http://localhost:8000`
    - `REACT_APP_API_BASE_URL=https://api.example.com`
-3. Restart the dev server after changing `.env`.
+3. Restart the dev server after changing `.env` (CTRL+C then `npm start`).
 
-If `REACT_APP_API_BASE_URL` is not set, the app will use same-origin requests.
+If `REACT_APP_API_BASE_URL` is not set, the app will use same-origin requests and you will likely see a 404 such as "Cannot POST /api/chat" during development unless a proxy is configured.
 
 The frontend expects the backend to respond with JSON of shape:
 ```json
